@@ -11,205 +11,246 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --mint:    #00B37E;
-      --mint-lt: #E6F7F2;
-      --amber:   #FF9900;
-      --ink:     #111210;
-      --muted:   #6B7280;
-      --border:  #E5E7EB;
-      --bg:      #F9F9F8;
-      --white:   #FFFFFF;
-      --red:     #EF4444;
-      --r:       14px;
+      --mint:   #00B37E;
+      --amber:  #FF9900;
+      --ink:    #111210;
+      --muted:  #6B7280;
+      --border: #E5E7EB;
+      --bg:     #F9F9F8;
+      --white:  #FFFFFF;
+      --red:    #EF4444;
+      --r:      14px;
     }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg); color: var(--ink);
-      -webkit-font-smoothing: antialiased; overflow-x: hidden;
-    }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
 
-    /* NAV */
+    /* ── NAV ── */
     nav {
-      position: sticky; top: 0; z-index: 100;
-      background: var(--white); border-bottom: 1px solid var(--border);
-      padding: 0 16px; display: flex; align-items: center;
-      justify-content: space-between; height: 52px;
+      position:sticky; top:0; z-index:200;
+      background:var(--white); border-bottom:1px solid var(--border);
+      padding:0 16px; display:flex; align-items:center; justify-content:space-between; height:52px;
     }
-    .logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); text-decoration: none; }
-    .logo span { color: var(--mint); }
-    .nav-btn {
-      background: var(--ink); color: white; font-size: 12px; font-weight: 600;
-      padding: 7px 14px; border-radius: 20px; text-decoration: none;
+    .logo { font-family:'DM Serif Display',serif; font-size:20px; color:var(--ink); text-decoration:none; }
+    .logo span { color:var(--mint); }
+    .hamburger {
+      width:40px; height:40px; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:5px;
+      cursor:pointer; border:none; background:none; padding:4px;
+      -webkit-tap-highlight-color:transparent;
     }
+    .hamburger span { width:22px; height:2px; background:var(--ink); border-radius:2px; transition:all .25s; display:block; }
+    .hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity:0; }
+    .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
 
-    /* HERO */
-    .hero { background: var(--ink); padding: 36px 20px 32px; text-align: center; }
+    /* ── DRAWER ── */
+    .drawer-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,.45);
+      z-index:190; opacity:0; pointer-events:none; transition:opacity .25s;
+    }
+    .drawer-overlay.open { opacity:1; pointer-events:all; }
+    .drawer {
+      position:fixed; top:0; right:-280px; width:280px; height:100%;
+      background:var(--white); z-index:195; transition:right .28s ease;
+      padding:64px 0 32px; display:flex; flex-direction:column;
+      box-shadow:-4px 0 24px rgba(0,0,0,.12);
+    }
+    .drawer.open { right:0; }
+    .drawer a {
+      padding:16px 24px; font-size:15px; font-weight:500;
+      color:var(--ink); text-decoration:none; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:10px;
+    }
+    .drawer a:active { background:#F3F4F6; }
+    .drawer-footer { margin-top:auto; padding:20px 24px; font-size:11px; color:var(--muted); }
+
+    /* ── HERO ── */
+    .hero { background:var(--ink); padding:36px 20px 32px; text-align:center; }
     .hero-pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,.08); color: #9CA3AF;
-      font-size: 11px; font-weight: 500; letter-spacing: .06em;
-      padding: 5px 12px; border-radius: 20px; margin-bottom: 18px; text-transform: uppercase;
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(255,255,255,.08); color:#9CA3AF;
+      font-size:11px; font-weight:500; letter-spacing:.06em;
+      padding:5px 12px; border-radius:20px; margin-bottom:18px; text-transform:uppercase;
     }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); animation: pulse 2s infinite; }
+    .dot { width:7px; height:7px; border-radius:50%; background:var(--mint); animation:pulse 2s infinite; }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
-    .hero h1 { font-family: 'DM Serif Display', serif; font-size: 30px; line-height: 1.2; color: white; margin-bottom: 10px; }
-    .hero h1 em { font-style: italic; color: var(--mint); }
-    .hero p { font-size: 14px; color: #9CA3AF; line-height: 1.6; max-width: 320px; margin: 0 auto 20px; }
+    .hero h1 { font-family:'DM Serif Display',serif; font-size:30px; line-height:1.2; color:white; margin-bottom:10px; }
+    .hero h1 em { font-style:italic; color:var(--mint); }
+    .hero-sub { font-size:14px; color:#9CA3AF; line-height:1.6; max-width:300px; margin:0 auto 20px; }
     .freshness {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
-      color: #9CA3AF; font-size: 12px; padding: 7px 14px; border-radius: 8px;
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+      color:#9CA3AF; font-size:12px; padding:7px 14px; border-radius:8px;
     }
 
-    /* SECTION */
-    .section { padding: 24px 16px; }
-    .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .sec-title { font-family: 'DM Serif Display', serif; font-size: 19px; }
-    .sec-tag { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing:.04em; }
-    .divider { height: 1px; background: var(--border); }
+    /* ── HOW IT WORKS ── */
+    .hiw { background:var(--white); border-bottom:1px solid var(--border); padding:24px 20px; }
+    .hiw-title { font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:16px; text-align:center; }
+    .hiw-steps { display:flex; justify-content:space-between; gap:8px; max-width:500px; margin:0 auto; }
+    .hiw-step { flex:1; text-align:center; }
+    .hiw-num {
+      width:28px; height:28px; border-radius:50%;
+      background:var(--mint); color:white;
+      font-size:12px; font-weight:700;
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 8px;
+    }
+    .hiw-label { font-size:11px; color:var(--muted); line-height:1.4; }
+    .hiw-connector { width:1px; background:var(--border); height:28px; margin-top:0; align-self:flex-start; margin-top:14px; }
 
-    /* HERO DEAL CARD */
-    .hdc {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--r); overflow: hidden;
-      text-decoration: none; color: inherit; display: block;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .hdc-img {
-      background: #F3F4F6; display: flex; align-items: center;
-      justify-content: center; padding: 24px; height: 200px; position: relative;
-    }
-    .hdc-img img { max-width: 100%; max-height: 160px; object-fit: contain; }
-    .hdc-badges { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; }
-    .b-hero { background: var(--amber); color: var(--ink); font-size: 10px; font-weight: 700; padding: 4px 9px; border-radius: 5px; text-transform: uppercase; letter-spacing:.04em; }
-    .b-disc { background: var(--red); color: white; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 5px; }
-    .b-prime { background: #00A8E1; color: white; font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 4px; margin-top: 4px; display:block; text-align:center; }
-    .hdc-body { padding: 16px; }
-    .hdc-title { font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 12px; }
-    .hdc-prices { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
-    .hdc-price { font-size: 24px; font-weight: 700; }
-    .hdc-mrp { font-size: 14px; color: var(--muted); text-decoration: line-through; }
-    .hdc-avg { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
-    .hdc-rating { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
-    .stars { color: #FBBF24; }
+    /* ── SECTION ── */
+    .section { padding:24px 16px; }
+    .sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .sec-title { font-family:'DM Serif Display',serif; font-size:19px; }
+    .sec-tag { font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+    .divider { height:1px; background:var(--border); }
+
+    /* ── HERO DEAL CARD ── */
+    .hdc { background:var(--white); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; text-decoration:none; color:inherit; display:block; -webkit-tap-highlight-color:transparent; }
+    .hdc-img { background:#F3F4F6; display:flex; align-items:center; justify-content:center; padding:24px; height:200px; position:relative; }
+    .hdc-img img { max-width:100%; max-height:160px; object-fit:contain; }
+    .hdc-badges { position:absolute; top:12px; left:12px; right:12px; display:flex; justify-content:space-between; align-items:flex-start; }
+    .b-hero { background:var(--amber); color:var(--ink); font-size:10px; font-weight:700; padding:4px 9px; border-radius:5px; text-transform:uppercase; letter-spacing:.04em; }
+    .badge-stack { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+    .b-disc { background:var(--red); color:white; font-size:11px; font-weight:700; padding:4px 8px; border-radius:5px; }
+    .b-prime { background:#00A8E1; color:white; font-size:10px; font-weight:700; padding:3px 7px; border-radius:4px; }
+    .hdc-body { padding:16px; }
+    .hdc-title { font-size:15px; font-weight:600; line-height:1.4; margin-bottom:12px; }
+    .hdc-price-row { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin-bottom:4px; }
+    .hdc-price { font-size:26px; font-weight:700; }
+    .hdc-mrp { font-size:13px; color:var(--muted); text-decoration:line-through; }
+    .hdc-save { font-size:13px; font-weight:600; color:#16A34A; margin-bottom:10px; }
+    .hdc-rating { font-size:12px; color:var(--muted); margin-bottom:16px; }
+    .stars { color:#FBBF24; }
     .btn-amz {
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      background: var(--amber); color: var(--ink);
-      font-size: 14px; font-weight: 700; padding: 14px; border-radius: 8px;
-      -webkit-tap-highlight-color: transparent;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      background:var(--amber); color:var(--ink);
+      font-size:14px; font-weight:700; padding:14px; border-radius:8px;
+      text-decoration:none; -webkit-tap-highlight-color:transparent;
     }
+    .btn-amz:active { opacity:.85; }
 
-    /* DEAL LIST */
-    .deal-list { display: flex; flex-direction: column; gap: 10px; }
-    .dc {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--r); display: flex; align-items: center; gap: 12px;
-      padding: 12px; text-decoration: none; color: inherit;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .dc-img {
-      width: 80px; height: 80px; flex-shrink: 0;
-      background: #F3F4F6; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center; padding: 8px;
-    }
-    .dc-img img { max-width: 100%; max-height: 64px; object-fit: contain; }
-    .dc-body { flex: 1; min-width: 0; }
-    .dc-title {
-      font-size: 13px; font-weight: 500; line-height: 1.4; margin-bottom: 6px;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .dc-pr { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
-    .dc-price { font-size: 16px; font-weight: 700; }
-    .dc-mrp { font-size: 12px; color: var(--muted); text-decoration: line-through; }
-    .dc-disc { background: var(--red); color: white; font-size: 10px; font-weight: 700; padding: 2px 5px; border-radius: 3px; }
-    .dc-rat { font-size: 11px; color: var(--muted); }
-    .dc-arr { color: var(--muted); font-size: 18px; flex-shrink: 0; }
+    /* ── DEAL LIST ── */
+    .deal-list { display:flex; flex-direction:column; gap:10px; }
+    .dc { background:var(--white); border:1px solid var(--border); border-radius:var(--r); display:flex; align-items:center; gap:12px; padding:12px; text-decoration:none; color:inherit; -webkit-tap-highlight-color:transparent; }
+    .dc:active { box-shadow:0 4px 16px rgba(0,0,0,.08); }
+    .dc-img { width:80px; height:80px; flex-shrink:0; background:#F3F4F6; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:8px; }
+    .dc-img img { max-width:100%; max-height:64px; object-fit:contain; }
+    .dc-body { flex:1; min-width:0; }
+    .dc-title { font-size:13px; font-weight:500; line-height:1.4; margin-bottom:6px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .dc-pr { display:flex; align-items:center; gap:6px; margin-bottom:2px; flex-wrap:wrap; }
+    .dc-price { font-size:16px; font-weight:700; }
+    .dc-mrp { font-size:12px; color:var(--muted); text-decoration:line-through; }
+    .dc-disc { background:var(--red); color:white; font-size:10px; font-weight:700; padding:2px 5px; border-radius:3px; }
+    .dc-save { font-size:11px; color:#16A34A; font-weight:600; }
+    .dc-rat { font-size:11px; color:var(--muted); }
+    .dc-arr { color:var(--muted); font-size:18px; flex-shrink:0; }
 
-    /* FINDS */
-    .finds-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .fc {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--r); overflow: hidden;
-      text-decoration: none; color: inherit; display: flex; flex-direction: column;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .fc-img { background: #F3F4F6; display: flex; align-items: center; justify-content: center; padding: 14px; height: 120px; }
-    .fc-img img { max-width: 100%; max-height: 92px; object-fit: contain; }
-    .fc-body { padding: 10px; flex: 1; display: flex; flex-direction: column; }
-    .fc-title {
-      font-size: 12px; font-weight: 500; line-height: 1.4; margin-bottom: 8px;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .fc-pr { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
-    .fc-price { font-size: 14px; font-weight: 700; }
-    .fc-disc { background: var(--red); color: white; font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 3px; }
-    .btn-sec {
-      display: block; text-align: center; border: 1.5px solid var(--border);
-      color: var(--ink); font-size: 11px; font-weight: 600;
-      padding: 7px; border-radius: 6px; text-decoration: none; margin-top: auto;
-    }
+    /* ── FINDS ── */
+    .finds-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+    .fc { background:var(--white); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; text-decoration:none; color:inherit; display:flex; flex-direction:column; -webkit-tap-highlight-color:transparent; }
+    .fc:active { opacity:.9; }
+    .fc-img { background:#F3F4F6; display:flex; align-items:center; justify-content:center; padding:14px; height:120px; }
+    .fc-img img { max-width:100%; max-height:92px; object-fit:contain; }
+    .fc-body { padding:10px; flex:1; display:flex; flex-direction:column; }
+    .fc-title { font-size:12px; font-weight:500; line-height:1.4; margin-bottom:6px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .fc-pr { display:flex; align-items:center; gap:5px; margin-bottom:8px; }
+    .fc-price { font-size:14px; font-weight:700; }
+    .fc-disc { background:var(--red); color:white; font-size:9px; font-weight:700; padding:2px 5px; border-radius:3px; }
+    .btn-sec { display:block; text-align:center; border:1.5px solid var(--border); color:var(--ink); font-size:11px; font-weight:600; padding:7px; border-radius:6px; text-decoration:none; margin-top:auto; }
 
-    /* NEWSLETTER */
-    .nl { background: var(--ink); margin: 8px 16px 24px; border-radius: var(--r); padding: 28px 20px; text-align: center; }
-    .nl h2 { font-family: 'DM Serif Display', serif; font-size: 22px; color: white; margin-bottom: 6px; }
-    .nl p { font-size: 13px; color: #9CA3AF; margin-bottom: 20px; line-height: 1.5; }
-    .nl-form { display: flex; flex-direction: column; gap: 10px; }
-    .nl-form input {
-      padding: 13px 16px; border: none; border-radius: 8px;
-      font-size: 15px; font-family: 'DM Sans', sans-serif; outline: none;
-      -webkit-appearance: none;
-    }
-    .nl-form button {
-      background: var(--mint); color: white; border: none; border-radius: 8px;
-      padding: 14px; font-size: 15px; font-weight: 600;
-      font-family: 'DM Sans', sans-serif; cursor: pointer;
-    }
-    .nl-note { font-size: 11px; color: #6B7280; margin-top: 10px; }
+    /* ── NEWSLETTER ── */
+    .nl { background:var(--ink); margin:8px 16px 24px; border-radius:var(--r); padding:28px 20px; text-align:center; }
+    .nl h2 { font-family:'DM Serif Display',serif; font-size:22px; color:white; margin-bottom:6px; }
+    .nl p { font-size:13px; color:#9CA3AF; margin-bottom:20px; line-height:1.5; }
+    .nl-form { display:flex; flex-direction:column; gap:10px; }
+    .nl-form input { padding:13px 16px; border:none; border-radius:8px; font-size:15px; font-family:'DM Sans',sans-serif; outline:none; -webkit-appearance:none; }
+    .nl-form button { background:var(--mint); color:white; border:none; border-radius:8px; padding:14px; font-size:15px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; }
+    .nl-note { font-size:11px; color:#6B7280; margin-top:10px; }
 
-    /* LOADING */
-    .loading { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 13px; }
-    .spinner { width: 26px; height: 26px; border: 3px solid var(--border); border-top-color: var(--mint); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 10px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── LOADING ── */
+    .loading { padding:40px 20px; text-align:center; color:var(--muted); font-size:13px; }
+    .spinner { width:26px; height:26px; border:3px solid var(--border); border-top-color:var(--mint); border-radius:50%; animation:spin .7s linear infinite; margin:0 auto 10px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
-    /* FOOTER */
-    footer { padding: 20px 16px 32px; border-top: 1px solid var(--border); text-align: center; }
-    footer p { font-size: 11px; color: var(--muted); line-height: 1.7; }
-    footer a { color: var(--muted); }
+    /* ── FOOTER ── */
+    footer { padding:20px 16px 40px; border-top:1px solid var(--border); text-align:center; }
+    footer p { font-size:11px; color:var(--muted); line-height:1.7; }
+    footer a { color:var(--muted); }
 
-    /* DESKTOP */
-    @media (min-width: 600px) {
-      .hero { padding: 56px 24px 44px; }
-      .hero h1 { font-size: 42px; }
-      .hero p { font-size: 15px; max-width: 420px; }
-      .section { padding: 28px 24px; max-width: 700px; margin: 0 auto; }
-      .hdc-img { height: 240px; }
-      .finds-grid { grid-template-columns: repeat(3, 1fr); }
-      .nl { max-width: 660px; margin: 8px auto 28px; }
-      .nl-form { flex-direction: row; }
-      .nl-form input { flex: 1; }
-      .nl-form button { width: auto; padding: 14px 24px; }
+    /* ── DESKTOP ── */
+    @media(min-width:600px) {
+      .hero { padding:56px 24px 44px; }
+      .hero h1 { font-size:40px; }
+      .hero-sub { font-size:15px; max-width:360px; }
+      .section { padding:28px 24px; max-width:700px; margin:0 auto; }
+      .hdc-img { height:240px; }
+      .finds-grid { grid-template-columns:repeat(3,1fr); }
+      .nl { max-width:660px; margin:8px auto 28px; }
+      .nl-form { flex-direction:row; }
+      .nl-form input { flex:1; }
+      .nl-form button { width:auto; padding:14px 24px; }
+      .hiw { padding:28px 24px; }
     }
-    @media (min-width: 900px) {
-      .finds-grid { grid-template-columns: repeat(4, 1fr); }
-      .deal-list { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+    @media(min-width:900px) {
+      .finds-grid { grid-template-columns:repeat(4,1fr); }
+      .deal-list { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
     }
   </style>
 </head>
 <body>
 
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="overlay" onclick="closeMenu()"></div>
+
+<!-- DRAWER -->
+<div class="drawer" id="drawer">
+  <a href="#deals" onclick="closeMenu()">🔥 Top Deals</a>
+  <a href="#finds" onclick="closeMenu()">✨ Hidden Finds</a>
+  <a href="how-it-works.html" onclick="closeMenu()">💡 How It Works</a>
+  <a href="#newsletter" onclick="closeMenu()">📬 Get Notified</a>
+  <a href="privacy.html" onclick="closeMenu()">🔒 Privacy Policy</a>
+  <div class="drawer-footer">© 2025 DealMint · Amazon Associate</div>
+</div>
+
+<!-- NAV -->
 <nav>
   <a href="#" class="logo">Deal<span>Mint</span></a>
-  <a href="#newsletter" class="nav-btn">Get Notified</a>
+  <button class="hamburger" id="ham" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
+<!-- HERO -->
 <div class="hero">
   <div class="hero-pill"><span class="dot"></span>Updated every 6 hours</div>
   <h1>Real Amazon deals.<br><em>Just 6 at a time.</em></h1>
-  <p>No fake discounts. Handpicked from Amazon India and checked for genuine value.</p>
+  <p class="hero-sub">No fake discounts. Handpicked from Amazon India.<br>Only deals with real value.</p>
   <div class="freshness"><span class="dot"></span><span id="freshness">Loading...</span></div>
 </div>
 
+<!-- HOW IT WORKS -->
+<div class="hiw">
+  <div class="hiw-title">How DealMint Works</div>
+  <div class="hiw-steps">
+    <div class="hiw-step">
+      <div class="hiw-num">1</div>
+      <div class="hiw-label">We scan Amazon prices</div>
+    </div>
+    <div class="hiw-connector"></div>
+    <div class="hiw-step">
+      <div class="hiw-num">2</div>
+      <div class="hiw-label">Compare with 90-day history</div>
+    </div>
+    <div class="hiw-connector"></div>
+    <div class="hiw-step">
+      <div class="hiw-num">3</div>
+      <div class="hiw-label">Show only the best deals</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOP DEAL -->
 <div class="section" id="deals">
   <div class="sec-head">
     <span class="sec-title">🔥 Top Deal Right Now</span>
@@ -220,6 +261,7 @@
 
 <div class="divider"></div>
 
+<!-- 5 MORE DEALS -->
 <div class="section">
   <div class="sec-head">
     <span class="sec-title">💎 5 More Deals</span>
@@ -230,14 +272,18 @@
 
 <div class="divider"></div>
 
+<!-- FINDS -->
 <div class="section" id="finds">
   <div class="sec-head">
     <span class="sec-title">✨ Hidden Finds</span>
     <span class="sec-tag">Gems from Amazon India</span>
   </div>
-  <div class="finds-grid" id="finds-grid"><div class="loading" style="grid-column:1/-1"><div class="spinner"></div>Loading...</div></div>
+  <div class="finds-grid" id="finds-grid">
+    <div class="loading" style="grid-column:1/-1"><div class="spinner"></div>Loading...</div>
+  </div>
 </div>
 
+<!-- NEWSLETTER -->
 <div class="nl" id="newsletter">
   <h2>Get deals in your inbox</h2>
   <p>6 real deals every morning.<br>No spam. Unsubscribe anytime.</p>
@@ -248,16 +294,21 @@
   <p class="nl-note" id="nl-msg">Join readers who get real deals daily.</p>
 </div>
 
+<!-- FOOTER -->
 <footer>
-  <p>© 2025 DealMint &nbsp;·&nbsp; <a href="/privacy.html">Privacy Policy</a><br>
+  <p>© 2025 DealMint &nbsp;·&nbsp; <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="how-it-works.html">How It Works</a><br>
   As an Amazon Associate we earn from qualifying purchases. Prices are approximate — always verify on Amazon.</p>
 </footer>
 
 <script>
-const CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTwi9aL_csQQI8j2EJY9dPHsT1E2HglkVDdLq7it6Ib5QAVjTUS2rV6zGs6lcLucw/pub?output=csv";
+// ── CONFIG ──
+const DEALS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTwi9aL_csQQI8j2EJY9dPHsT1E2HglkVDdLq7it6Ib5QAVjTUS2rV6zGs6lcLucw/pub?output=csv&sheet=Deals";
+const FINDS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTwi9aL_csQQI8j2EJY9dPHsT1E2HglkVDdLq7it6Ib5QAVjTUS2rV6zGs6lcLucw/pub?output=csv&sheet=Finds";
 const TAG = "pickmash-21";
+const SLOT_MS = 6 * 60 * 60 * 1000;
 
-const FINDS = [
+// Fallback finds if sheet 2 not yet published
+const FALLBACK_FINDS = [
   {title:"Plum Niacinamide Toner",asin:"B09PV4379W",price:395,mrp:440,img:"https://m.media-amazon.com/images/I/41BNihr3HwL._SL1001_.jpg"},
   {title:"Sofa Armrest Tray",asin:"B0DDCJVDY5",price:999,mrp:1500,img:"https://m.media-amazon.com/images/I/61wPl6GjmxL._SL1080_.jpg"},
   {title:"Fan Cleaner Duster",asin:"B0DCSH87R6",price:999,mrp:1999,img:"https://m.media-amazon.com/images/I/71QQvXGiZaL._SL1500_.jpg"},
@@ -270,86 +321,117 @@ const FINDS = [
   {title:"Amazon Solimo Foldable Wardrobe",asin:"B07QYMT58Y",price:1999,mrp:3500,img:"https://m.media-amazon.com/images/I/91ZXSyYM-CL._SL1500_.jpg"},
 ];
 
-const fmt  = n  => "₹" + Number(n).toLocaleString("en-IN");
+// ── HELPERS ──
+const fmt  = n => "₹" + Number(n).toLocaleString("en-IN");
 const pct  = (p,m) => m>p ? Math.round(((m-p)/m)*100) : 0;
-const aurl = a  => `https://www.amazon.in/dp/${a}?tag=${TAG}&linkCode=ll2`;
-const star = r  => r>0 ? `<span class="stars">★</span> ${r}` : "";
+const save = (p,m) => m>p ? fmt(m-p) : null;
+const aurl = a => `https://www.amazon.in/dp/${a}?tag=${TAG}&linkCode=ll2`;
+const star = r => r>0 ? `<span class="stars">★</span> ${r}` : "";
 
+// ── MENU ──
+function toggleMenu() {
+  const open = document.getElementById("drawer").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("open", open);
+  document.getElementById("ham").classList.toggle("open", open);
+  document.body.style.overflow = open ? "hidden" : "";
+}
+function closeMenu() {
+  document.getElementById("drawer").classList.remove("open");
+  document.getElementById("overlay").classList.remove("open");
+  document.getElementById("ham").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+// ── FRESHNESS ── (time-based, same for everyone)
+function currentSetIndex(total) {
+  return Math.floor(Date.now() / SLOT_MS) % total;
+}
 function updateFreshness() {
-  const ms   = 6*60*60*1000;
-  const left = ms - (Date.now() % ms);
-  const h    = Math.floor(left/3600000);
-  const m    = Math.floor((left%3600000)/60000);
+  const left = SLOT_MS - (Date.now() % SLOT_MS);
+  const h = Math.floor(left/3600000);
+  const m = Math.floor((left%3600000)/60000);
   document.getElementById("freshness").textContent =
     `Next refresh in ${h>0?h+"h ":""}${m}m`;
 }
 
+// ── CSV ──
 function splitLine(line) {
   const c=[]; let s=""; let q=false;
-  for(const ch of line){
-    if(ch==='"') q=!q;
-    else if(ch===','&&!q){c.push(s);s="";}
-    else s+=ch;
-  }
+  for(const ch of line){ if(ch==='"') q=!q; else if(ch===','&&!q){c.push(s);s="";}else s+=ch; }
   c.push(s); return c;
 }
-
-function parseCsv(csv) {
+function parseCsv(csv, type) {
   const lines = csv.split("\n").filter(l=>l.trim());
-  const hi = lines.findIndex(l=>l.toLowerCase().includes("asin")&&l.toLowerCase().includes("set"));
+  const hi = lines.findIndex(l=>l.toLowerCase().includes("asin"));
   if(hi<0) return [];
   const h = lines[hi].split(",").map(s=>s.trim().toLowerCase());
   const g = k => h.findIndex(x=>x.includes(k));
-  const [iSet,iSlot,iAsin,iTitle,iPrice,iMrp,iImg,iRat,iRev] =
-    ["set","slot","asin","title","price","mrp","image","rating","review"].map(g);
-  return lines.slice(hi+1).map(line=>{
-    const c = splitLine(line);
-    const asin=(c[iAsin]||"").trim();
-    if(!asin||asin==="ASIN_HERE"||asin==="asin") return null;
-    const price=parseFloat(c[iPrice])||0;
-    if(price<=0) return null;
-    const img=(c[iImg]||"").trim();
-    if(!img||img==="IMAGE_URL_GOES_HERE") return null;
-    return {
-      set:parseInt(c[iSet])||0, slot:(c[iSlot]||"").trim().toLowerCase(),
-      asin, price, mrp:parseFloat(c[iMrp])||price,
-      title:(c[iTitle]||"").trim(), img,
-      rating:parseFloat(c[iRat])||0, reviews:parseInt(c[iRev])||0,
-    };
-  }).filter(Boolean);
+
+  if(type==="deals") {
+    const [iSet,iSlot,iAsin,iTitle,iPrice,iMrp,iImg,iRat,iRev] =
+      ["set","slot","asin","title","price","mrp","image","rating","review"].map(g);
+    return lines.slice(hi+1).map(line=>{
+      const c=splitLine(line);
+      const asin=(c[iAsin]||"").trim();
+      if(!asin||asin==="ASIN_HERE") return null;
+      const price=parseFloat(c[iPrice])||0;
+      const img=(c[iImg]||"").trim();
+      if(price<=0||!img||img==="IMAGE_URL_GOES_HERE") return null;
+      return { set:parseInt(c[iSet])||0, slot:(c[iSlot]||"").trim().toLowerCase(),
+        asin, price, mrp:parseFloat(c[iMrp])||price,
+        title:(c[iTitle]||"").trim(), img,
+        rating:parseFloat(c[iRat])||0, reviews:parseInt(c[iRev])||0 };
+    }).filter(Boolean);
+  } else {
+    // finds sheet: #, asin, title, price, mrp, image, rating, reviews
+    const [iAsin,iTitle,iPrice,iMrp,iImg,iRat,iRev] =
+      ["asin","title","price","mrp","image","rating","review"].map(g);
+    return lines.slice(hi+1).map(line=>{
+      const c=splitLine(line);
+      const asin=(c[iAsin]||"").trim();
+      if(!asin||asin==="ASIN_HERE") return null;
+      const price=parseFloat(c[iPrice])||0;
+      const img=(c[iImg]||"").trim();
+      if(price<=0||!img||img==="IMAGE_URL_GOES_HERE") return null;
+      return { asin, price, mrp:parseFloat(c[iMrp])||price,
+        title:(c[iTitle]||"").trim(), img,
+        rating:parseFloat(c[iRat])||0, reviews:parseInt(c[iRev])||0 };
+    }).filter(Boolean);
+  }
 }
 
-function currentSet(total) {
-  return (Math.floor(Date.now()/(6*60*60*1000)) % total) + 1;
-}
-
+// ── RENDER HERO ──
 function renderHero(d) {
-  const p = pct(d.price,d.mrp);
+  const p=pct(d.price,d.mrp); const s=save(d.price,d.mrp);
   document.getElementById("hero-wrap").innerHTML = `
     <a href="${aurl(d.asin)}" target="_blank" rel="noopener sponsored" class="hdc">
       <div class="hdc-img">
         <div class="hdc-badges">
           <span class="b-hero">⚡ Top Deal</span>
-          <div>${p>0?`<span class="b-disc">-${p}%</span>`:""}<span class="b-prime">prime</span></div>
+          <div class="badge-stack">
+            ${p>0?`<span class="b-disc">-${p}%</span>`:""}
+            <span class="b-prime">prime</span>
+          </div>
         </div>
         <img src="${d.img}" alt="${d.title}" loading="eager"/>
       </div>
       <div class="hdc-body">
         <div class="hdc-title">${d.title}</div>
-        <div class="hdc-prices">
+        <div class="hdc-price-row">
           <span class="hdc-price">${fmt(d.price)}</span>
           ${d.mrp>d.price?`<span class="hdc-mrp">${fmt(d.mrp)}</span>`:""}
         </div>
-        <div class="hdc-avg">MRP ${fmt(d.mrp)}</div>
+        ${s?`<div class="hdc-save">You save ${s}</div>`:""}
         ${d.rating>0?`<div class="hdc-rating">${star(d.rating)}${d.reviews>0?" · "+d.reviews.toLocaleString("en-IN")+" reviews":""}</div>`:""}
         <div class="btn-amz">View on Amazon ↗</div>
       </div>
     </a>`;
 }
 
+// ── RENDER DEALS ──
 function renderDeals(deals) {
   document.getElementById("deals-list").innerHTML = deals.map(d=>{
-    const p=pct(d.price,d.mrp);
+    const p=pct(d.price,d.mrp); const s=save(d.price,d.mrp);
     return `
       <a href="${aurl(d.asin)}" target="_blank" rel="noopener sponsored" class="dc">
         <div class="dc-img"><img src="${d.img}" alt="${d.title}" loading="lazy"/></div>
@@ -360,6 +442,7 @@ function renderDeals(deals) {
             ${d.mrp>d.price?`<span class="dc-mrp">${fmt(d.mrp)}</span>`:""}
             ${p>0?`<span class="dc-disc">-${p}%</span>`:""}
           </div>
+          ${s?`<div class="dc-save">Save ${s}</div>`:""}
           ${d.rating>0?`<div class="dc-rat">${star(d.rating)}${d.reviews>0?" · "+d.reviews.toLocaleString("en-IN")+" reviews":""}</div>`:""}
         </div>
         <span class="dc-arr">›</span>
@@ -367,8 +450,9 @@ function renderDeals(deals) {
   }).join("");
 }
 
-function renderFinds() {
-  document.getElementById("finds-grid").innerHTML = FINDS.map(f=>{
+// ── RENDER FINDS ──
+function renderFinds(finds) {
+  document.getElementById("finds-grid").innerHTML = finds.map(f=>{
     const p=pct(f.price,f.mrp);
     return `
       <a href="${aurl(f.asin)}" target="_blank" rel="noopener sponsored" class="fc">
@@ -385,23 +469,29 @@ function renderFinds() {
   }).join("");
 }
 
+// ── NEWSLETTER ──
 function handleNL(e) {
   e.preventDefault();
   document.getElementById("nl-msg").textContent = "✅ You're in! First deal dropping soon.";
   document.getElementById("email-in").value = "";
 }
 
+// ── INIT ──
 async function init() {
   updateFreshness();
   setInterval(updateFreshness, 60000);
-  renderFinds();
+
+  // Load deals
   try {
-    const res  = await fetch(CSV);
+    const res  = await fetch(DEALS_CSV);
     const csv  = await res.text();
-    const rows = parseCsv(csv);
-    const total = Math.max(...rows.map(r=>r.set).filter(Boolean),1);
-    const setN  = currentSet(total);
-    const set   = rows.filter(r=>r.set===setN);
+    const rows = parseCsv(csv, "deals");
+    const sets = [...new Set(rows.map(r=>r.set))].filter(Boolean).sort();
+    const total = sets.length || 1;
+    // Time-based: same slot for app and website
+    const setIdx = currentSetIndex(total);
+    const setN   = sets[setIdx] || 1;
+    const set    = rows.filter(r=>r.set===setN);
     document.getElementById("set-label").textContent = "Updated today";
     const hero   = set.find(r=>r.slot==="hero");
     const others = set.filter(r=>r.slot==="deal");
@@ -412,6 +502,16 @@ async function init() {
   } catch(e) {
     document.getElementById("hero-wrap").innerHTML = `<p class="loading">Could not load deals. Please refresh.</p>`;
     document.getElementById("deals-list").innerHTML = "";
+  }
+
+  // Load finds from sheet 2, fallback to hardcoded
+  try {
+    const res   = await fetch(FINDS_CSV);
+    const csv   = await res.text();
+    const finds = parseCsv(csv, "finds");
+    renderFinds(finds.length ? finds : FALLBACK_FINDS);
+  } catch(e) {
+    renderFinds(FALLBACK_FINDS);
   }
 }
 
